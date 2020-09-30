@@ -13,7 +13,9 @@ import org.hibernate.query.Query;
 public class MovieDaoImpl implements MovieDao {
     public Movie add(Movie movie) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             Long movieId = (Long) session.save(movie);
             transaction.commit();
@@ -24,6 +26,10 @@ public class MovieDaoImpl implements MovieDao {
                 transaction.rollback();
             }
             throw new RuntimeException("Can't insert movie");
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
