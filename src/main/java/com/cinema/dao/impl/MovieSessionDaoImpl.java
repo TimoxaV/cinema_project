@@ -21,11 +21,11 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
                     + "= :movieId and showTime >= :dateFrom and showTime < :dateTo",
                     MovieSession.class);
             query.setParameter("movieId", movieId);
-            LocalDateTime dateFrom = date.atStartOfDay();
-            query.setParameter("dateFrom", dateFrom);
-            LocalDateTime dateTo = dateFrom.plusHours(24L);
-            query.setParameter("dateTo", dateTo);
+            query.setParameter("dateFrom", date.atStartOfDay());
+            query.setParameter("dateTo", date.atStartOfDay().plusHours(24L));
             return query.getResultList();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't find sessions for movie with id " + movieId, e);
         }
     }
 
