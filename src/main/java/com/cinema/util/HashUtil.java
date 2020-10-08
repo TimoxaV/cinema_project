@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class HashUtil {
-    private static final String algorithm = "SHA-512";
+    private static final String ALGORITHM = "SHA-512";
 
     public static byte[] getSalt() {
         SecureRandom random = new SecureRandom();
@@ -17,14 +17,14 @@ public class HashUtil {
     public static String hashPassword(String password, byte[] salt) {
         StringBuilder hashedPwd = new StringBuilder();
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+            MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
             messageDigest.update(salt);
             byte[] digest = messageDigest.digest(password.getBytes());
             for (byte symbol : digest) {
                 hashedPwd.append(symbol);
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("There is a problem with hashing password!");
+            throw new RuntimeException("There is a problem with hashing password!", e);
         }
         return hashedPwd.toString();
     }
