@@ -1,9 +1,12 @@
 package com.cinema;
 
+import com.cinema.exceptions.AuthenticationException;
 import com.cinema.lib.Injector;
 import com.cinema.model.CinemaHall;
 import com.cinema.model.Movie;
 import com.cinema.model.MovieSession;
+import com.cinema.model.User;
+import com.cinema.security.AuthenticationService;
 import com.cinema.service.CinemaHallService;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
@@ -13,7 +16,7 @@ import java.time.LocalDateTime;
 public class Main {
     private static Injector injector = Injector.getInstance("com.cinema");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AuthenticationException {
         Movie fastAndFurious = new Movie();
         fastAndFurious.setTitle("Fast and Furious");
         MovieService movieService = (MovieService) injector.getInstance(MovieService.class);
@@ -68,5 +71,15 @@ public class Main {
         System.out.println("------------------Find Sully Sessions--------------------------");
         sessionService.findAvailableSessions(sully.getId(), LocalDate.now())
                 .forEach(System.out::println);
+
+        System.out.println("------------------Users Check--------------------------");
+        AuthenticationService authService =
+                (AuthenticationService) injector.getInstance(AuthenticationService.class);
+        authService.register("new1@gmail.com", "1234");
+        authService.register("new2@gmail.com", "1234");
+        User new1 = authService.login("new1@gmail.com", "1234");
+        User new2 = authService.login("new2@gmail.com", "1234");
+        System.out.println(new1);
+        System.out.println(new2);
     }
 }
