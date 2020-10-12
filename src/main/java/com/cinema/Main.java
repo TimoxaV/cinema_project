@@ -103,13 +103,9 @@ public class Main {
                 (OrderService) injector.getInstance(OrderService.class);
         Order order1 = orderService.completeOrder(cart1.getTickets(), cart1.getUser());
         System.out.println(order1);
+        System.out.println(cartService.getByUser(new1));
         Order order2 = orderService.completeOrder(cart2.getTickets(), cart2.getUser());
         System.out.println(order2);
         System.out.println(orderService.getOrderHistory(new1));
-
-        System.out.println("------------------Clear ShoppingCarts Check--------------------");
-        cartService.clear(cart1);
-        System.out.println(cart1);
-
     }
 }
