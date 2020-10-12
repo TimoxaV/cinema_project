@@ -5,12 +5,14 @@ import com.cinema.lib.Injector;
 import com.cinema.model.CinemaHall;
 import com.cinema.model.Movie;
 import com.cinema.model.MovieSession;
+import com.cinema.model.Order;
 import com.cinema.model.ShoppingCart;
 import com.cinema.model.User;
 import com.cinema.security.AuthenticationService;
 import com.cinema.service.CinemaHallService;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
+import com.cinema.service.OrderService;
 import com.cinema.service.ShoppingCartService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -91,6 +93,21 @@ public class Main {
         cartService.addSession(sessionSully1, new1);
         ShoppingCart cart1 = cartService.getByUser(new1);
         System.out.println(cart1);
+        cartService.addSession(sessionFastAndFurious1, new2);
+        cartService.addSession(sessionSully1, new2);
+        cartService.addSession(sessionSully2, new2);
+        ShoppingCart cart2 = cartService.getByUser(new2);
+
+        System.out.println("------------------Orders Check--------------------------");
+        OrderService orderService =
+                (OrderService) injector.getInstance(OrderService.class);
+        Order order1 = orderService.completeOrder(cart1.getTickets(), cart1.getUser());
+        System.out.println(order1);
+        Order order2 = orderService.completeOrder(cart2.getTickets(), cart2.getUser());
+        System.out.println(order2);
+        System.out.println(orderService.getOrderHistory(new1));
+
+        System.out.println("------------------Clear ShoppingCarts Check--------------------");
         cartService.clear(cart1);
         System.out.println(cart1);
 
