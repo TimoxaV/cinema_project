@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 import org.apache.log4j.Logger;
 
 public class Main {
-    private static Logger logger = Logger.getLogger(Main.class);
-    private static Injector injector = Injector.getInstance("com.cinema");
+    private static final Logger logger = Logger.getLogger(Main.class);
+    private static final Injector injector = Injector.getInstance("com.cinema");
 
     public static void main(String[] args) throws AuthenticationException {
         Movie fastAndFurious = new Movie();
@@ -74,7 +74,7 @@ public class Main {
         sessionService.findAvailableSessions(fastAndFurious.getId(),
                 LocalDate.now())
                 .forEach(logger::info);
-        System.out.println("------------------Find Sully Sessions--------------------------");
+        logger.info("------------------Find Sully Sessions--------------------------");
         sessionService.findAvailableSessions(sully.getId(), LocalDate.now())
                 .forEach(logger::info);
 
@@ -83,18 +83,27 @@ public class Main {
                 (AuthenticationService) injector.getInstance(AuthenticationService.class);
         authService.register("new1@gmail.com", "1234");
         authService.register("new2@gmail.com", "1234");
-        User new1 = authService.login("new1@gmail.com", "1234");
-        User new2 = authService.login("new2@gmail.com", "1234");
-        logger.info(new1);
-        logger.info(new2);
-
+        User new1 = null;
+        User new2 = null;
+        try {
+            new1 = authService.login("new1@gmail.com", "1234");
+            logger.info(new1);
+        } catch (AuthenticationException e) {
+            logger.warn("Login failed: " + e);
+        }
+        try {
+            new2 = authService.login("new2@gmail.com", "1234");
+            logger.info(new2);
+        } catch (AuthenticationException e) {
+            logger.warn("Login failed: " + e);
+        }
         logger.info("------------------ShoppingCarts Check--------------------------");
         ShoppingCartService cartService =
                 (ShoppingCartService) injector.getInstance(ShoppingCartService.class);
         cartService.addSession(sessionFastAndFurious1, new1);
         cartService.addSession(sessionSully1, new1);
         ShoppingCart cart1 = cartService.getByUser(new1);
-        System.out.println(cart1);
+        logger.info(cart1);
         cartService.addSession(sessionFastAndFurious1, new2);
         cartService.addSession(sessionSully1, new2);
         cartService.addSession(sessionSully2, new2);
