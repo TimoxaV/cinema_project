@@ -49,4 +49,13 @@ public class MovieDaoImpl implements MovieDao {
             throw new DataProcessingException("Can't get all movies", e);
         }
     }
+
+    @Override
+    public Movie get(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Movie where id = :movieId", Movie.class)
+                    .setParameter("movieId", id)
+                    .getSingleResult();
+        }
+    }
 }
