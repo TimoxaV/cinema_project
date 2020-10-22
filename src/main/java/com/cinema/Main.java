@@ -1,7 +1,7 @@
 package com.cinema;
 
+import com.cinema.config.AppConfig;
 import com.cinema.exceptions.AuthenticationException;
-import com.cinema.lib.Injector;
 import com.cinema.model.CinemaHall;
 import com.cinema.model.Movie;
 import com.cinema.model.MovieSession;
@@ -17,15 +17,17 @@ import com.cinema.service.ShoppingCartService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);
-    private static final Injector injector = Injector.getInstance("com.cinema");
+    private static final AnnotationConfigApplicationContext context =
+            new AnnotationConfigApplicationContext(AppConfig.class);
 
-    public static void main(String[] args) throws AuthenticationException {
+    public static void main(String[] args) {
         Movie fastAndFurious = new Movie();
         fastAndFurious.setTitle("Fast and Furious");
-        MovieService movieService = (MovieService) injector.getInstance(MovieService.class);
+        MovieService movieService = context.getBean(MovieService.class);
         movieService.add(fastAndFurious);
         movieService.getAll().forEach(logger::info);
 
@@ -38,8 +40,7 @@ public class Main {
         CinemaHall cinemaHall = new CinemaHall();
         cinemaHall.setCapacity(150);
         cinemaHall.setDescription("Simple hall");
-        CinemaHallService cinemaHallService
-                = (CinemaHallService) injector.getInstance(CinemaHallService.class);
+        CinemaHallService cinemaHallService = context.getBean(CinemaHallService.class);
         cinemaHallService.add(cinemaHall);
         cinemaHallService.getAll().forEach(logger::info);
 
@@ -48,8 +49,7 @@ public class Main {
         sessionFastAndFurious1.setCinemaHall(cinemaHall);
         sessionFastAndFurious1.setMovie(fastAndFurious);
         sessionFastAndFurious1.setShowTime(LocalDateTime.now());
-        MovieSessionService sessionService
-                = (MovieSessionService) injector.getInstance(MovieSessionService.class);
+        MovieSessionService sessionService = context.getBean(MovieSessionService.class);
         sessionService.add(sessionFastAndFurious1);
 
         MovieSession sessionSully1 = new MovieSession();
@@ -79,8 +79,7 @@ public class Main {
                 .forEach(logger::info);
 
         logger.info("------------------Users Check--------------------------");
-        AuthenticationService authService =
-                (AuthenticationService) injector.getInstance(AuthenticationService.class);
+        AuthenticationService authService = context.getBean(AuthenticationService.class);
         authService.register("new1@gmail.com", "1234");
         authService.register("new2@gmail.com", "1234");
         User new1 = null;
@@ -98,8 +97,7 @@ public class Main {
             logger.warn("Login failed: " + e);
         }
         logger.info("------------------ShoppingCarts Check--------------------------");
-        ShoppingCartService cartService =
-                (ShoppingCartService) injector.getInstance(ShoppingCartService.class);
+        ShoppingCartService cartService = context.getBean(ShoppingCartService.class);
         cartService.addSession(sessionFastAndFurious1, new1);
         cartService.addSession(sessionSully1, new1);
         ShoppingCart cart1 = cartService.getByUser(new1);
@@ -110,8 +108,7 @@ public class Main {
         ShoppingCart cart2 = cartService.getByUser(new2);
 
         logger.info("------------------Orders Check--------------------------");
-        OrderService orderService =
-                (OrderService) injector.getInstance(OrderService.class);
+        OrderService orderService = context.getBean(OrderService.class);
         Order order1 = orderService.completeOrder(cart1.getTickets(), cart1.getUser());
         logger.info(order1);
         logger.info(cartService.getByUser(new1));
