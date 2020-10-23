@@ -1,4 +1,4 @@
-package com.cinema.model.dto.mappers;
+package com.cinema.service.mappers;
 
 import com.cinema.model.MovieSession;
 import com.cinema.model.dto.MovieSessionRequestDto;
