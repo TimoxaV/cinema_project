@@ -7,13 +7,11 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-@FieldsValueMatchValidation.List({
-        @FieldsValueMatchValidation(
+@FieldsValueMatchValidation(
         field = "password",
         fieldMatch = "repeatPassword",
         message = "Password doesn't match"
-        )
-})
+)
 public class UserRequestDto {
     @UserEmailValidation
     private String email;

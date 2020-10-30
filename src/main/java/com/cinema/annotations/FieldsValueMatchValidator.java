@@ -16,13 +16,9 @@ public class FieldsValueMatchValidator
     }
 
     @Override
-    public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
-        Object fieldValue = new BeanWrapperImpl(value).getPropertyValue(field);
-        Object fieldMatchValue = new BeanWrapperImpl(value).getPropertyValue(fieldMatch);
-        if (fieldValue != null) {
-            return fieldValue.equals(fieldMatchValue);
-        } else {
-            return fieldMatchValue == null;
-        }
+    public boolean isValid(Object dto, ConstraintValidatorContext constraintValidatorContext) {
+        Object fieldValue = new BeanWrapperImpl(dto).getPropertyValue(field);
+        Object fieldMatchValue = new BeanWrapperImpl(dto).getPropertyValue(fieldMatch);
+        return fieldValue != null ? fieldValue.equals(fieldMatchValue) : fieldMatchValue == null;
     }
 }
