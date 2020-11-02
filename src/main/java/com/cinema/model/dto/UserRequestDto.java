@@ -10,7 +10,7 @@ import lombok.Data;
 @FieldsValueMatchValidation(
         field = "password",
         fieldMatch = "repeatPassword",
-        message = "Password doesn't match"
+        message = "Passwords don't match"
 )
 public class UserRequestDto {
     @UserEmailValidation
