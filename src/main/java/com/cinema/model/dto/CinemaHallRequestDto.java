@@ -1,9 +1,12 @@
 package com.cinema.model.dto;
 
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class CinemaHallRequestDto {
-    private int capacity;
+    @NotNull
+    private Integer capacity;
+    @NotNull
     private String description;
 }
