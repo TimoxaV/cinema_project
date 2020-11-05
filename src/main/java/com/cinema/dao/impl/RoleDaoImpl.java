@@ -1,9 +1,8 @@
 package com.cinema.dao.impl;
 
-import com.cinema.dao.UserDao;
+import com.cinema.dao.RoleDao;
 import com.cinema.exceptions.DataProcessingException;
-import com.cinema.model.User;
-import java.util.Optional;
+import com.cinema.model.Role;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -11,29 +10,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserDaoImpl implements UserDao {
+public class RoleDaoImpl implements RoleDao {
     private final SessionFactory sessionFactory;
 
     @Autowired
-    public UserDaoImpl(SessionFactory sessionFactory) {
+    public RoleDaoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public User add(User user) {
+    public void add(Role role) {
         Session session = null;
         Transaction transaction = null;
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
-            session.persist(user);
+            session.save(role);
             transaction.commit();
-            return user;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can't insert entity user " + user.toString(), e);
+            throw new DataProcessingException("Can't insert role entity" + role, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -42,21 +40,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Role getRoleByName(String roleName) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from User u join fetch u.roles "
-                    + "where u.email = :email", User.class)
-                    .setParameter("email", email)
-                    .uniqueResultOptional();
-        } catch (Exception e) {
-            throw new DataProcessingException("Can't find user with email " + email, e);
-        }
-    }
-
-    @Override
-    public Optional<User> get(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(session.get(User.class, id));
+            return session.createQuery("from Role r where r.roleName = :roleName ", Role.class)
+                    .setParameter("roleName", Role.RoleName.valueOf(roleName))
+                    .getSingleResult();
         }
     }
 }
