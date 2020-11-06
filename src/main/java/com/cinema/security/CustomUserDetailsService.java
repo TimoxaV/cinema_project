@@ -2,7 +2,6 @@ package com.cinema.security;
 
 import com.cinema.model.User;
 import com.cinema.service.UserService;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,19 +19,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOptional = userService.findByEmail(email);
+        User user = userService.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("User not found."));
         org.springframework.security.core.userdetails.User.UserBuilder builder = null;
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            builder = org.springframework.security.core.userdetails.User
-                    .withUsername(user.getEmail());
-            builder.password(user.getPassword());
-            builder.roles(user.getRoles().stream()
-                    .map(role -> role.getRoleName().toString())
-                    .toArray(String[]::new));
-        } else {
-            throw new UsernameNotFoundException("User not found.");
-        }
+        builder = org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail());
+        builder.password(user.getPassword());
+        builder.roles(user.getRoles().stream()
+                .map(role -> role.getRoleName().toString())
+                .toArray(String[]::new));
         return builder.build();
     }
 }
